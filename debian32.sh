@@ -120,7 +120,7 @@ service fail2ban restart
 
 # install squid3
 apt-get -y install squid3
-wget -O /etc/squid3/squid.conf "http://raw.github.com/MuLuu09/conf/master/squid.conf"
+wget -O /etc/squid3/squid.conf "http://zakidotmy.5gbfree.com/debian32/squid.conf"
 sed -i $MYIP2 /etc/squid3/squid.conf;
 
 # install webmin
